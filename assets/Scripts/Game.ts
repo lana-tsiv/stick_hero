@@ -40,7 +40,7 @@ export default class Game extends cc.Component {
   private score: number = 0;
   private bestScore: number = 0;
   private gameOverNode: cc.Node = null;
-  private backgroundMusicPlayed: boolean = false; // Флаг для отслеживания воспроизведения музыки
+  private backgroundMusicPlayed: boolean = false;
 
   onLoad() {
     this.initializeGame();
@@ -52,17 +52,12 @@ export default class Game extends cc.Component {
     this.mainCamera = cc.find("GameCanvas/Camera").getComponent(cc.Camera);
 
     this.setupCamera();
-
-    cc.log("Игра загружена");
   }
 
   playBackgroundMusic() {
     if (this.backgroundMusic) {
       cc.audioEngine.playMusic(this.backgroundMusic, true);
       this.backgroundMusicPlayed = true;
-      cc.log("Фоновая музыка запущена");
-    } else {
-      cc.log("Фоновая музыка не присвоена");
     }
   }
 
@@ -70,12 +65,10 @@ export default class Game extends cc.Component {
     if (this.backgroundMusicPlayed) {
       cc.audioEngine.stopMusic();
       this.backgroundMusicPlayed = false;
-      cc.log("Фоновая музыка остановлена");
     }
   }
 
   initializeGame() {
-    cc.log("Инициализация игры");
     this.score = 0;
     this.scoreLabel.string = this.score.toString();
     this.clearPlatforms();
@@ -89,7 +82,6 @@ export default class Game extends cc.Component {
           this.player.height / 2
       )
     );
-    cc.log(`Позиция игрока: ${this.player.position}`);
 
     this.spawnNewPlatform();
     this.resetBridge();
@@ -100,7 +92,6 @@ export default class Game extends cc.Component {
   }
 
   clearPlatforms() {
-    cc.log("Очистка платформ");
     this.platforms.forEach((platform) => {
       if (platform) {
         platform.destroy();
@@ -110,7 +101,6 @@ export default class Game extends cc.Component {
   }
 
   clearIndicators() {
-    cc.log("Очистка индикаторов");
     this.indicators.forEach((indicator) => {
       if (indicator) {
         indicator.destroy();
@@ -120,17 +110,12 @@ export default class Game extends cc.Component {
   }
 
   resetBridge() {
-    cc.log("Сброс моста");
     this.bridge.height = 0;
     this.bridge.active = false;
     this.unschedule(this.growBridge);
-    cc.log(
-      `Мост сброшен. Высота: ${this.bridge.height}, Активен: ${this.bridge.active}`
-    );
   }
 
   createPlatform(position: cc.Vec2): cc.Node {
-    cc.log("Создание платформы");
     const platform = cc.instantiate(this.platformPrefab);
     platform.setPosition(position);
     platform.setContentSize(cc.size(200, 20));
@@ -144,12 +129,10 @@ export default class Game extends cc.Component {
     indicator.name = "Indicator";
     this.indicators.push(indicator);
 
-    cc.log(`Платформа создана в позиции: ${platform.position}`);
     return platform;
   }
 
   spawnNewPlatform() {
-    cc.log("Создание новой платформы");
     const minDistance = 200;
     const maxDistance = 400;
     const distance = minDistance + Math.random() * (maxDistance - minDistance);
@@ -159,13 +142,11 @@ export default class Game extends cc.Component {
       this.currentPlatform.y
     );
     this.nextPlatform = this.createPlatform(newPosition);
-    cc.log(`Новая платформа создана в позиции: ${this.nextPlatform.position}`);
   }
 
   onTouchStart(event: cc.Event.EventTouch) {
     if (this.bridge.active) return;
 
-    // Запуск фоновой музыки при первом касании, если не запустилась на загрузке сцены
     if (!this.backgroundMusicPlayed) {
       this.playBackgroundMusic();
     }
@@ -236,7 +217,6 @@ export default class Game extends cc.Component {
     if (indicator) {
       const indicatorX = this.nextPlatform.x + indicator.x;
       if (Math.abs(bridgeEndX - indicatorX) <= 10) {
-        cc.log("Мост пересекся с индикатором!");
         return true;
       }
     }
@@ -291,25 +271,16 @@ export default class Game extends cc.Component {
 
     const gameOverNode = cc.find("GameCanvas/GameOverNode");
     if (gameOverNode) {
-      cc.log("GameOverNode найден");
       const gameOverComponent = gameOverNode.getComponent("GameOver");
       if (gameOverComponent) {
-        cc.log("Компонент GameOver найден");
         gameOverComponent.setScores(this.score, this.bestScore);
-      } else {
-        cc.log("Компонент GameOver не найден на GameOverNode");
       }
       gameOverNode.active = true;
-    } else {
-      cc.log("GameOverNode не найден");
     }
 
     const scoreLabel = cc.find("GameCanvas/ScoreLabel");
     if (scoreLabel) {
-      cc.log("ScoreLabel найден, деактивируем его");
       scoreLabel.destroy();
-    } else {
-      cc.log("ScoreLabel не найден");
     }
 
     this.player.active = false;
@@ -320,7 +291,6 @@ export default class Game extends cc.Component {
   }
 
   resetGame() {
-    cc.log("Сброс игры");
     this.score = 0;
     this.scoreLabel.string = this.score.toString();
     this.scoreLabel.node.active = true;
@@ -336,14 +306,12 @@ export default class Game extends cc.Component {
           this.player.height / 2
       )
     );
-    cc.log(`Позиция игрока после сброса: ${this.player.position}`);
 
     this.spawnNewPlatform();
 
     this.resetBridge();
 
     this.player.active = true;
-    cc.log(`Активен ли игрок: ${this.player.active}`);
 
     if (this.mainCamera) {
       this.mainCamera.node.setPosition(cc.v2(0, 0));

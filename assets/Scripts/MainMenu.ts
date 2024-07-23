@@ -12,16 +12,12 @@ export default class MainMenu extends cc.Component {
 
   onLoad() {
     this.playButton.node.on("click", this.onPlayButtonClicked, this);
-    cc.log("MainMenu загружено, кнопка Play привязана");
   }
 
   onPlayButtonClicked() {
-    cc.log("Кнопка Play нажата");
-
     if (!this.backgroundMusicPlayed && this.backgroundMusic) {
       cc.audioEngine.playMusic(this.backgroundMusic, true);
       this.backgroundMusicPlayed = true;
-      cc.log("Фоновая музыка запущена в MainMenu");
     }
 
     cc.director.loadScene("GameScene");
